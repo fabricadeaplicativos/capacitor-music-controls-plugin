@@ -1,5 +1,2 @@
-
-  <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-      package="com.ingageco.capacitormusiccontrols.capacitormusiccontrolsplugin">
-  </manifest>
-  
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.selcip.capacitor.MusicControl.capacitormusiccontrol">
+</manifest>

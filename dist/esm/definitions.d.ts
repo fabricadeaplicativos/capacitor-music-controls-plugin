@@ -1,14 +1,18 @@
-declare global {
+import { PluginListenerHandle } from "@capacitor/core";
+declare module "@capacitor/core" {
     interface PluginRegistry {
-        CapacitorMusicControls?: CapacitorMusicControls;
+        MusicControl: MusicControlPlugin;
     }
 }
-export interface CapacitorMusicControlsInfo {
+export declare type NotificationCallback = (info: {
+    message: string;
+}) => void;
+export interface MusicControlOptions {
     track?: string;
     artist?: string;
     cover?: string;
     isPlaying?: boolean;
-    dismissable?: boolean;
+    dismissible?: boolean;
     hasPrev?: boolean;
     hasNext?: boolean;
     hasSkipForward?: boolean;
@@ -28,13 +32,13 @@ export interface CapacitorMusicControlsInfo {
     closeIcon?: string;
     notificationIcon?: string;
 }
-export interface CapacitorMusicControls {
+export interface MusicControlPlugin {
     /**
-       * Create the media controls
-       * @param options {MusicControlsOptions}
-       * @returns {Promise<any>}
-       */
-    create(options: CapacitorMusicControlsInfo): Promise<any>;
+     * Create the media controls
+     * @param options {MusicControlsOptions}
+     * @returns {Promise<any>}
+     */
+    create(options: MusicControlOptions): Promise<any>;
     /**
      * Destroy the media controller
      * @returns {Promise<any>}
@@ -58,8 +62,11 @@ export interface CapacitorMusicControls {
         isPlaying: boolean;
     }): void;
     /**
-     * Toggle dismissable:
-     * @param dismissable {boolean}
+     * Toggle dismissible:
+     * @param dismissible {boolean}
      */
-    updateDismissable(dismissable: boolean): void;
+    updateDismissable(dismissible: boolean): void;
+    addListener(eventName: "controlsNotification", listenerFunc: (info: {
+        message: string;
+    }) => void): PluginListenerHandle;
 }

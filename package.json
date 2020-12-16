@@ -1,30 +1,46 @@
 {
-  "name": "capacitor-music-controls-plugin",
-  "version": "1.0.1",
-  "description": "Implementation of MusicControls for Capacitor projects",
-  "main": "dist/esm/index.js",
+  "name": "capacitor-music-control",
+  "version": "1.0.2",
+  "description": "Media control for capacitor projects",
+  "main": "dist/plugin.js",
+  "module": "dist/esm/index.js",
   "types": "dist/esm/index.d.ts",
   "scripts": {
-    "build": "npm run clean && tsc",
-    "clean": "rm -rf ./dist",
+    "lint": "npm run prettier -- --check && npm run swiftlint -- lint",
+    "prettier": "prettier \"**/*.{css,html,ts,js,java}\"",
+    "swiftlint": "node-swiftlint",
+    "build": "npm run clean && tsc && rollup -c rollup.config.js",
+    "clean": "rimraf ./dist",
     "watch": "tsc --watch",
     "prepublishOnly": "npm run build"
   },
-  "author": "Ingage",
+  "author": "Luiz Eduardo C",
   "license": "MIT",
-  "dependencies": {
-    "@capacitor/core": "latest"
-  },
   "devDependencies": {
-    "typescript": "^3.2.4",
-    "@capacitor/ios": "latest",
-    "@capacitor/android": "latest"
+    "@capacitor/android": "^2.4.5",
+    "@capacitor/core": "^2.4.5",
+    "@capacitor/ios": "^2.4.5",
+    "@ionic/prettier-config": "^1.0.0",
+    "@ionic/swiftlint-config": "^1.0.0",
+    "@rollup/plugin-node-resolve": "^8.1.0",
+    "@types/prettier": "^2.1.5",
+    "@types/rimraf": "^3.0.0",
+    "@types/rollup": "^0.54.0",
+    "prettier": "^2.0.5",
+    "prettier-plugin-java": "^0.8.0",
+    "rimraf": "^3.0.0",
+    "rollup": "^2.21.0",
+    "swiftlint": "^1.0.1",
+    "typescript": "~3.8.3"
+  },
+  "peerDependencies": {
+    "@capacitor/core": "^2.4.5"
   },
   "files": [
     "dist/",
     "ios/",
     "android/",
-    "CapacitorMusicControlsPlugin.podspec"
+    "CapacitorMusicControl.podspec"
   ],
   "keywords": [
     "capacitor",
@@ -41,9 +57,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ingageco/capacitor-music-controls-plugin"
+    "url": "https://github.com/selcip/capacitor-music-controls-plugin"
   },
   "bugs": {
-    "url": "https://github.com/ingageco/capacitor-music-controls-plugin/issues"
-  }
+    "url": "https://github.com/selcip/capacitor-music-controls-plugin/issues"
+  },
+  "dependencies": {}
 }

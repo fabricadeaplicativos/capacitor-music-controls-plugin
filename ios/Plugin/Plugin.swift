@@ -23,16 +23,16 @@ extension DispatchQueue {
  * Please read the Capacitor iOS Plugin Development Guide
  * here: https://capacitor.ionicframework.com/docs/plugins/ios
  */
-@objc(CapacitorMusicControls)
-public class CapacitorMusicControls: CAPPlugin {
+@objc(MusicControl)
+public class MusicControl: CAPPlugin {
     
-    var musicControlsInfo: CapacitorMusicControlsInfo!;
+    var musicControlsInfo: MusicControlInfo!;
     var eventListnerActive = false;
  
     @objc func create(_ call: CAPPluginCall) {
         let options: Dictionary = call.options;
 
-        self.musicControlsInfo = CapacitorMusicControlsInfo(dictionary: options as NSDictionary);
+        self.musicControlsInfo = MusicControlInfo(dictionary: options as NSDictionary);
         
         
         print("MusicControlsOptions:")
@@ -81,7 +81,7 @@ public class CapacitorMusicControls: CAPPlugin {
         
         let options: Dictionary = call.options;
         
-        musicControlsInfo = CapacitorMusicControlsInfo(dictionary: options as NSDictionary);
+        musicControlsInfo = MusicControlInfo(dictionary: options as NSDictionary);
         
         let elapsed = self.musicControlsInfo.elapsed;
         let playbackRate = self.musicControlsInfo.isPlaying;
@@ -249,35 +249,35 @@ public class CapacitorMusicControls: CAPPlugin {
         let commandCenter = MPRemoteCommandCenter.shared();
            
         commandCenter.playCommand.isEnabled = true;
-        commandCenter.playCommand.addTarget(self, action: #selector(CapacitorMusicControls.playEvent(_:)));
+        commandCenter.playCommand.addTarget(self, action: #selector(MusicControl.playEvent(_:)));
         commandCenter.pauseCommand.isEnabled = true;
-        commandCenter.pauseCommand.addTarget(self, action: #selector(CapacitorMusicControls.pauseEvent(_:)));
+        commandCenter.pauseCommand.addTarget(self, action: #selector(MusicControl.pauseEvent(_:)));
         
         if(self.musicControlsInfo.hasNext == true){
             commandCenter.nextTrackCommand.isEnabled = true;
-            commandCenter.nextTrackCommand.addTarget(self, action: #selector(CapacitorMusicControls.nextTrackEvent(_:)));
+            commandCenter.nextTrackCommand.addTarget(self, action: #selector(MusicControl.nextTrackEvent(_:)));
         }
         
         if(self.musicControlsInfo.hasPrev == true){
             commandCenter.previousTrackCommand.isEnabled = true;
-            commandCenter.previousTrackCommand.addTarget(self, action: #selector(CapacitorMusicControls.prevTrackEvent(_:)));
+            commandCenter.previousTrackCommand.addTarget(self, action: #selector(MusicControl.prevTrackEvent(_:)));
         }
         
         if(self.musicControlsInfo.hasSkipBackward == true){
             commandCenter.skipBackwardCommand.isEnabled = true;
             commandCenter.skipBackwardCommand.preferredIntervals = [self.musicControlsInfo.skipBackwardInterval!];
-            commandCenter.skipBackwardCommand.addTarget(self, action: #selector(CapacitorMusicControls.skipBackwardEvent(_:)));
+            commandCenter.skipBackwardCommand.addTarget(self, action: #selector(MusicControl.skipBackwardEvent(_:)));
         }
         
         if(self.musicControlsInfo.hasSkipForward == true){
             commandCenter.skipForwardCommand.isEnabled = true;
             commandCenter.skipForwardCommand.preferredIntervals = [self.musicControlsInfo.skipForwardInterval!];
-            commandCenter.skipForwardCommand.addTarget(self, action: #selector(CapacitorMusicControls.skipForwardEvent(_:)));
+            commandCenter.skipForwardCommand.addTarget(self, action: #selector(MusicControl.skipForwardEvent(_:)));
         }
         
         if(self.musicControlsInfo.hasScrubbing == true){
             commandCenter.changePlaybackPositionCommand.isEnabled = true;
-            commandCenter.changePlaybackPositionCommand.addTarget(self, action: #selector(CapacitorMusicControls.changedThumbSliderOnLockScreen(_:)));
+            commandCenter.changePlaybackPositionCommand.addTarget(self, action: #selector(MusicControl.changedThumbSliderOnLockScreen(_:)));
         }
     }
     

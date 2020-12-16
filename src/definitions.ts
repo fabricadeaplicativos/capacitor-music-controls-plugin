@@ -1,16 +1,19 @@
+import { PluginListenerHandle } from "@capacitor/core";
 
-declare global {
+declare module "@capacitor/core" {
   interface PluginRegistry {
-    CapacitorMusicControls?: CapacitorMusicControls;
+    MusicControl: MusicControlPlugin;
   }
 }
 
-export interface CapacitorMusicControlsInfo {
+export type NotificationCallback = (info: { message: string }) => void;
+
+export interface MusicControlOptions {
   track?: string;
   artist?: string;
   cover?: string;
   isPlaying?: boolean;
-  dismissable?: boolean;
+  dismissible?: boolean;
   hasPrev?: boolean;
   hasNext?: boolean;
   hasSkipForward?: boolean;
@@ -31,43 +34,50 @@ export interface CapacitorMusicControlsInfo {
   notificationIcon?: string;
 }
 
-export interface CapacitorMusicControls {
+export interface MusicControlPlugin {
   /**
-     * Create the media controls
-     * @param options {MusicControlsOptions}
-     * @returns {Promise<any>}
-     */
-    create(options: CapacitorMusicControlsInfo): Promise<any>;
-    /**
-     * Destroy the media controller
-     * @returns {Promise<any>}
-     */
-    destroy(): Promise<any>;
-    /**
-     * Subscribe to the events of the media controller
-     * @returns {Observable<any>}
-     */
-    // subscribe(): Observable<any>;
-    // /**
-    //  * Start listening for events, this enables the Observable from the subscribe method
-    //  */
-    // listen(): void;
-    /**
-     * Toggle play/pause:
-     * @param isPlaying {boolean}
-     */
-    updateIsPlaying(isPlaying: boolean): void;
-    /**
-     * Update elapsed time, optionally toggle play/pause:
-     * @param args {Object}
-     */
-    updateElapsed(args: {
-        elapsed: string;
-        isPlaying: boolean;
-    }): void;
-    /**
-     * Toggle dismissable:
-     * @param dismissable {boolean}
-     */
-    updateDismissable(dismissable: boolean): void;
+   * Create the media controls
+   * @param options {MusicControlsOptions}
+   * @returns {Promise<any>}
+   */
+  create(options: MusicControlOptions): Promise<any>;
+
+  /**
+   * Destroy the media controller
+   * @returns {Promise<any>}
+   */
+  destroy(): Promise<any>;
+
+  /**
+   * Subscribe to the events of the media controller
+   * @returns {Observable<any>}
+   */
+  // subscribe(): Observable<any>;
+  // /**
+  //  * Start listening for events, this enables the Observable from the subscribe method
+  //  */
+  // listen(): void;
+
+  /**
+   * Toggle play/pause:
+   * @param isPlaying {boolean}
+   */
+  updateIsPlaying(isPlaying: boolean): void;
+
+  /**
+   * Update elapsed time, optionally toggle play/pause:
+   * @param args {Object}
+   */
+  updateElapsed(args: { elapsed: string; isPlaying: boolean }): void;
+
+  /**
+   * Toggle dismissible:
+   * @param dismissible {boolean}
+   */
+  updateDismissable(dismissible: boolean): void;
+
+  addListener(
+    eventName: "controlsNotification",
+    listenerFunc: (info: { message: string }) => void
+  ): PluginListenerHandle;
 }

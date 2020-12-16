@@ -21,7 +21,7 @@ PRs for rounding out issues and improving the plugin are welcome.
 ## Installation
 
 - Current release
-`npm install capacitor-music-controls-plugin`
+`npm install capacitor-music-control`
 
 ## iOS
 
@@ -33,10 +33,10 @@ npx cap sync ios
 After you install the plugin, locate your MainActivity.java (can be found in /android/app/src/main/java/path/to/my/app/MainActivity.java)
 
 import this path:
-import com.ingageco.capacitormusiccontrols.CapacitorMusicControls;
+import com.selcip.capacitormusiccontrols.MusicControl;
 
 add class inside bridge activity:
-add(CapacitorMusicControls.class);
+add(MusicControl.class);
 
 Finally, run:
 npx cap sync android
@@ -48,14 +48,14 @@ At the top of your file import Capacitor Plugins and this extract this plugin
 
 ```javascript
 import { Plugins } from '@capacitor/core';
-const { CapacitorMusicControls } = Plugins;
+const { MusicControl } = Plugins;
 ```
 
 ## Methods
 
 - Create the media controls:
 ```javascript
-CapacitorMusicControls.create({
+MusicControl.create({
 	track       : 'Time is Running Out',		// optional, default : ''
 	artist      : 'Muse',						// optional, default : ''
 	album       : 'Absolution',     // optional, default: ''
@@ -79,7 +79,7 @@ CapacitorMusicControls.create({
 
     // Android only, optional
     isPlaying   : true,							// optional, default : true
-    dismissable : true,							// optional, default : false
+    dismissible : true,							// optional, default : false
 	// text displayed in the status bar when the notification (and the ticker) are updated
 	ticker	  : 'Now playing "Time is Running Out"',
 	//All icons default to their built-in android equivalents
@@ -96,7 +96,7 @@ CapacitorMusicControls.create({
 - Update whether the music is playing true/false, as well as the time elapsed (seconds)
 
 ```javascript
-CapacitorMusicControls.updateIsPlaying({
+MusicControl.updateIsPlaying({
     isPlaying: true, // affects Android only
     elapsed: timeElapsed // affects iOS Only
 });
@@ -105,7 +105,7 @@ CapacitorMusicControls.updateIsPlaying({
 - Listen for events and pass them to your handler function
 
 ```javascript
-CapacitorMusicControls.addListener('controlsNotification', (info: any) => {
+MusicControl.addListener('controlsNotification', (info: any) => {
     console.log('controlsNotification was fired');
     console.log(info);
     handleControlsEvent(info);
