@@ -7,13 +7,16 @@ declare module "@capacitor/core" {
 export declare type NotificationCallback = (info: {
     message: string;
 }) => void;
+export interface UpdateNotificationOptions {
+    isPlaying: boolean;
+}
 export interface MusicControlOptions {
     track?: string;
     artist?: string;
     cover?: string;
     isPlaying?: boolean;
     dismissible?: boolean;
-    hasPrev?: boolean;
+    hasPrevious?: boolean;
     hasNext?: boolean;
     hasSkipForward?: boolean;
     hasSkipBackward?: boolean;
@@ -50,9 +53,9 @@ export interface MusicControlPlugin {
      */
     /**
      * Toggle play/pause:
-     * @param isPlaying {boolean}
+     * @param args {UpdateNotificationOptions}
      */
-    updateIsPlaying(isPlaying: boolean): void;
+    updateIsPlaying(args: UpdateNotificationOptions): void;
     /**
      * Update elapsed time, optionally toggle play/pause:
      * @param args {Object}

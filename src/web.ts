@@ -1,5 +1,9 @@
 import { WebPlugin } from "@capacitor/core";
-import { MusicControlPlugin, MusicControlOptions } from "./definitions";
+import {
+  MusicControlPlugin,
+  MusicControlOptions,
+  UpdateNotificationOptions,
+} from "./definitions";
 
 export class MusicControlWeb extends WebPlugin implements MusicControlPlugin {
   constructor() {
@@ -18,8 +22,8 @@ export class MusicControlWeb extends WebPlugin implements MusicControlPlugin {
     return new Promise((resolve) => resolve("any"));
   }
 
-  updateIsPlaying(isPlaying: boolean): void {
-    console.log("isPlaying", isPlaying);
+  updateIsPlaying(args: UpdateNotificationOptions): void {
+    console.log("isPlaying", args);
   }
 
   updateElapsed(args: { elapsed: string; isPlaying: boolean }): void {
