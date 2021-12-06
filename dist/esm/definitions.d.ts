@@ -1,20 +1,18 @@
 import type { PluginListenerHandle } from '@capacitor/core';
-export declare type NotificationCallback = (info: {
-    message: string;
-}) => void;
+export declare enum MusicControlEvents {
+    FINISHED = "songFinished",
+    IS_PLAYING = "isPlaying",
+    NOTIFICATION_ACTIONS = "mediaActions"
+}
 export interface TogglePlayPauseResponse {
     isPlaying: boolean;
 }
-export interface UpdateIsPlaying {
-    isPlaying: boolean;
-}
 export interface MusicControlOptions {
-    track?: string;
-    artist?: string;
+    album: string;
+    artist: string;
     cover?: string;
-    hasNext?: boolean;
+    track: string;
     url: string;
-    album?: string;
 }
 export interface MusicControlPlugin {
     checkPermissions(): Promise<PermissionStatus>;
@@ -31,29 +29,11 @@ export interface MusicControlPlugin {
      */
     destroy(): Promise<any>;
     /**
-     * Manually play/pause
-     * @param args {UpdateIsPlaying}
-     */
-    updateIsPlaying(args: UpdateIsPlaying): Promise<TogglePlayPauseResponse>;
-    /**
      * Toggle play/pause:
      * @returns {Promise<TogglePlayPauseResponse>}
      */
     togglePlayPause(): Promise<TogglePlayPauseResponse>;
-    /**
-     * Update elapsed time, optionally toggle play/pause:
-     * @param args {Object}
-     */
-    updateElapsed(args: {
-        elapsed: string;
-        isPlaying: boolean;
-    }): void;
-    /**
-     * Toggle dismissible:
-     * @param dismissible {boolean}
-     */
-    updateDismissable(dismissible: boolean): void;
-    addListener(eventName: string, listenerFunc: (info: any) => void): PluginListenerHandle;
+    addListener(eventName: MusicControlEvents, listenerFunc: (info: any) => void): PluginListenerHandle;
 }
 export interface PermissionStatus {
     wake_lock: PermissionState;
