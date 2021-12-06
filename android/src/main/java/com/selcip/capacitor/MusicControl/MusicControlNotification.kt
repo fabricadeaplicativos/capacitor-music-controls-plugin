@@ -1,6 +1,7 @@
 package com.selcip.capacitor.MusicControl
 
-import android.app.Notification
+import android.R.attr
+import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -9,201 +10,114 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Build
+import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
+import androidx.core.app.NotificationCompat
+import androidx.media.session.MediaButtonReceiver
+import com.selcip.capacitor.MusicControl.Models.TrackInfo
 import com.selcip.capacitor.MusicControl.capacitormusiccontrol.R
-import java.lang.ref.WeakReference
 import java.net.HttpURLConnection
 import java.net.URL
+import androidx.media.app.NotificationCompat as MediaNotificationCompat
+import com.getcapacitor.plugin.util.AssetUtil
 
-class MusicControlNotification(private val context: Context, private val NOTIFICATION_ID: Int, private val musicControls: MusicControl) {
-    private var notificationBuilder: Notification.Builder? = null
-    var isPlaying: Boolean = false
-        set(value) {
-            if (isPlaying == trackInfo?.isPlaying && hasNotification()) {
-                return  // Not recreate the notification with the same data
-            }
+import com.getcapacitor.Logger.config
+import android.R.attr.smallIcon
+import com.getcapacitor.PluginConfig
 
-            Log.i(TAG, "isPlaying was: ${trackInfo?.isPlaying}")
-            field = value
-            trackInfo?.isPlaying = value
-            Log.i(TAG, "isPlaying is now: ${trackInfo?.isPlaying}")
 
-            createBuilder()
-            createNotification()
-        }
-    private var bitmapCover: Bitmap? = null
-    var trackInfo: TrackInfo? = null
-        set(value) {
-            field = value
-
-            if (bitmapCover == null) {
-                trackInfo?.cover?.let { getCover(it) }
-            }
-
-            createBuilder()
-            createNotification()
-        }
-
+@SuppressLint("ServiceCast")
+class MusicControlNotification(
+    private val context: Context,
+    private val NOTIFICATION_ID: Int,
+    private val musicControls: MusicControl
+) {
+    private var trackInfo: TrackInfo? = null
+    private lateinit var cover: Bitmap
+    private var notificationBuilder: NotificationCompat.Builder? = null
     private var notificationManager: NotificationManager? = null
-    var killer_service: WeakReference<MusicControlBackground>? = null
+    var isPlaying: Boolean = true
+        set(value) {
+            Log.i(TAG, "changing isplaying on notification")
+            field = value
+            createNotification(trackInfo)
+            showNotification()
+        }
 
     init {
-        Log.i(TAG, "iniciando notificacao")
-
         if (notificationManager == null) {
-            notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager?
+            notificationManager =
+                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             createNotificationChannel()
+        }
+
+        cover = BitmapFactory.decodeResource(context.resources, R.drawable.cmc_fixed_cover)
+    }
+
+    fun showNotification() {
+        notificationManager!!.notify(NOTIFICATION_ID, notificationBuilder!!.build())
+    }
+
+    fun createNotification(newTrackInfo: TrackInfo?) {
+        trackInfo = newTrackInfo
+
+        val prevPendingIntent =
+            PendingIntent.getBroadcast(context, 1, Intent("music-controls-previous"), 0)
+        val playOrPausePendingIntent =
+            PendingIntent.getBroadcast(
+                context, 1, Intent(
+                    if (isPlaying) {
+                        "music-controls-pause"
+                    } else {
+                        "music-controls-play"
+                    }
+                ), 0
+            )
+        val nextPendingIntent =
+            PendingIntent.getBroadcast(context, 1, Intent("music-controls-next"), 0)
+        val deleteIntent =
+            PendingIntent.getBroadcast(context, 1, Intent("music-controls-destroy"), 0)
+        val openIntent =
+            PendingIntent.getActivity(
+                context,
+                0,
+                Intent(context, context.javaClass).setAction(Intent.ACTION_MAIN)
+                    .addCategory(Intent.CATEGORY_LAUNCHER),
+                0
+            )
+
+        val builder = NotificationCompat.Builder(context, CHANNEL_ID)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setStyle(
+                MediaNotificationCompat.MediaStyle()
+                    .setMediaSession(musicControls.mediaSession.sessionToken)
+                    .setShowActionsInCompactView(0, 1, 2)
+            )
+            .addAction(R.drawable.cmc_previous_icon, "Previous", prevPendingIntent)
+            .addAction(
+                if (isPlaying) {
+                    R.drawable.cmc_pause_icon
+                } else {
+                    R.drawable.cmc_play_icon
+                }, "Pause", playOrPausePendingIntent
+            )
+            .addAction(R.drawable.cmc_next_icon, "Next", nextPendingIntent)
+            .setDeleteIntent(deleteIntent)
+            .setContentIntent(openIntent)
+            .setContentTitle(trackInfo?.track)
+            .setContentText(trackInfo?.artist)
+            .setLargeIcon(cover)
+
+        val smallIcon = R.drawable.cmc_play_icon
+        val customSmallIcon = AssetUtil.getResourceID(context, "cmc_small_icon", "drawable")
+
+        if (customSmallIcon > 0) {
+            builder.setSmallIcon(customSmallIcon)
         } else {
-            Log.i(TAG, "Notification manager already exists")
-        }
-    }
-
-    private fun createNotification() {
-        val notification = notificationBuilder!!.build()
-
-        if (killer_service != null) {
-            killer_service!!.get()?.setNotification(notification);
-        }
-
-        notificationManager!!.notify(NOTIFICATION_ID, notification)
-    }
-
-    fun setKillerService(s: MusicControlBackground) {
-        killer_service = WeakReference(s)
-    }
-
-    private fun hasNotification(): Boolean {
-        return killer_service != null && killer_service!!.get()!!.getNotification() != null
-    }
-
-    private fun createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name: CharSequence = "capacitor-music-control"
-            val description = "capacitor-music-control notification"
-            val notificationChannel = NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_DEFAULT)
-            notificationChannel.setSound(null, null)
-            notificationChannel.enableLights(false);
-            notificationChannel.enableVibration(false);
-            notificationChannel.description = description
-            notificationManager!!.createNotificationChannel(notificationChannel)
-        } else {
-            Log.i(TAG, "Notification channel requires api greater than 26, current api is: ${Build.VERSION.SDK_INT}")
-        }
-    }
-
-    private fun createBuilder() {
-        Log.i(TAG, "Creating notification builder")
-
-        val builder: Notification.Builder = if (Build.VERSION.SDK_INT >= 26) {
-            Notification.Builder(context, CHANNEL_ID)
-        } else {
-            Notification.Builder(context)
-        }
-
-        val mediaStyle = Notification.MediaStyle().setMediaSession(musicControls.mediaSession.sessionToken).setShowActionsInCompactView(0, 1, 2)
-
-        builder.setContentTitle(trackInfo?.track)
-        builder.setContentText(trackInfo?.artist)
-        builder.setTicker(trackInfo?.ticker)
-
-        if (trackInfo?.cover?.isNotEmpty() == true && bitmapCover != null) {
-            builder.setLargeIcon(bitmapCover)
-        }
-
-        builder.setVisibility(Notification.VISIBILITY_PUBLIC)
-        builder.style = mediaStyle
-
-        //dismiss intent
-        builder.setOngoing(false)
-        builder.setDeleteIntent(PendingIntent.getBroadcast(context, 1, Intent("music-controls-destroy"), 0))
-
-        //tap to open
-        builder.setContentIntent(
-                PendingIntent.getActivity(
-                        context,
-                        0,
-                        Intent(context, context.javaClass).setAction(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LAUNCHER),
-                        0
-                )
-        )
-
-        if (trackInfo?.smallIcon != null) {
-            val resourceId = getResourceId(trackInfo?.smallIcon, 0)
-            val usePlayingIcon = resourceId == 0
-            if (!usePlayingIcon) {
-                builder.setSmallIcon(resourceId)
-            } else {
-                builder.setSmallIcon(R.drawable.cmc_play_icon)
-            }
-        } else {
-            builder.setSmallIcon(R.drawable.cmc_play_icon)
-        }
-
-        if (trackInfo?.cover?.isEmpty() == true && this.bitmapCover != null) {
-            builder.setLargeIcon(this.bitmapCover);
-        }
-
-        val actions = getActions()
-
-        for (action in actions) {
-            builder.addAction(action)
-        }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder.style = Notification.MediaStyle().setMediaSession(musicControls.mediaSession.sessionToken).setShowActionsInCompactView(0, 1, 2)
+            builder.setSmallIcon(smallIcon)
         }
 
         notificationBuilder = builder
-    }
-
-    private fun getActions(): ArrayList<Notification.Action> {
-        val actions: ArrayList<Notification.Action> = ArrayList()
-
-        if (trackInfo?.hasPrevious == true) {
-            actions.add(
-                    Notification.Action.Builder(
-                            R.drawable.cmc_previous_icon, "previous",
-                            PendingIntent.getBroadcast(context, 1, Intent("music-controls-previous"), 0)
-                    ).build()
-            )
-        }
-
-        Log.i(TAG, "Actions is playing: $isPlaying")
-
-        if (trackInfo?.isPlaying == true) {
-            actions.add(
-                    Notification.Action.Builder(
-                            R.drawable.cmc_pause_icon, "pause",
-                            PendingIntent.getBroadcast(context, 1, Intent("music-controls-pause"), 0)
-                    ).build()
-            )
-        } else {
-            actions.add(
-                    Notification.Action.Builder(
-                            R.drawable.cmc_play_icon, "play",
-                            PendingIntent.getBroadcast(context, 1, Intent("music-controls-play"), 0)
-                    ).build()
-            )
-        }
-
-        if (trackInfo?.hasNext == true) {
-            actions.add(
-                    Notification.Action.Builder(
-                            R.drawable.cmc_next_icon, "next",
-                            PendingIntent.getBroadcast(context, 1, Intent("music-controls-next"), 0)
-                    ).build()
-            )
-        }
-
-        return actions
-    }
-
-    private fun getCover(url: String) {
-        try {
-            bitmapCover = getBitmapFromURL(url)
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-        }
     }
 
     private fun getBitmapFromURL(stringUrl: String): Bitmap? {
@@ -221,28 +135,21 @@ class MusicControlNotification(private val context: Context, private val NOTIFIC
         }
     }
 
-    fun destroy() {
-        Log.i(TAG, "Canceling...")
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = context.resources.getString(R.string.channel_name)
+            val descriptionText = context.resources.getString(R.string.channel_description)
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
+                description = descriptionText
+            }
 
-        if (this.killer_service !=null) {
-            this.killer_service!!.get()?.setNotification(null);
+            notificationManager!!.createNotificationChannel(channel)
         }
-
-        this.notificationManager?.cancel(NOTIFICATION_ID)
-
-        Log.i(TAG, "Cancelled")
     }
 
-    private fun getResourceId(name: String?, fallback: Int): Int {
-        return try {
-            if (name?.isEmpty() == true) {
-                return fallback
-            }
-            val resourceId: Int = context.resources.getIdentifier(name, "drawable", context.packageName)
-            if (resourceId == 0) fallback else resourceId
-        } catch (ex: Exception) {
-            fallback
-        }
+    fun destroy() {
+        notificationManager?.cancel(NOTIFICATION_ID)
     }
 
     companion object {

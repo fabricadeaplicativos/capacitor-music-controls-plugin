@@ -108,7 +108,7 @@ class MusicControlBackground: Service() {
                     wakeLock!!.release()
                     Log.i(TAG, "wakeLock released")
                 } catch (e: Exception) {
-                    Log.e(TAG, e.message)
+                    Log.e(TAG, e.message.toString())
                 }
             } else {
                 Log.i(TAG, "wakeLock not held")

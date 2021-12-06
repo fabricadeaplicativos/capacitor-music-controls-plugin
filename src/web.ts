@@ -1,43 +1,42 @@
-import { WebPlugin } from "@capacitor/core";
-import {
-  MusicControlPlugin,
-  MusicControlOptions,
-  UpdateNotificationOptions,
-} from "./definitions";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { WebPlugin } from '@capacitor/core';
+
+import type { PermissionStatus, TogglePlayPauseResponse } from '.';
+import type { MusicControlOptions, MusicControlPlugin } from './definitions';
 
 export class MusicControlWeb extends WebPlugin implements MusicControlPlugin {
   constructor() {
     super({
-      name: "MusicControl",
-      platforms: ["web"],
+      name: 'MusicControl',
+      platforms: ['web'],
     });
   }
 
-  create(options: MusicControlOptions): Promise<any> {
-    console.log(options);
-    return new Promise((resolve) => resolve("any"));
+  checkPermissions(): Promise<PermissionStatus> {
+    throw this.unimplemented('checkPermissions -> not implemented on web');
+  }
+
+  requestPermissions(): Promise<PermissionStatus> {
+    throw this.unimplemented('requestPermissions -> not implemented on web');
+  }
+
+  async create(_options: MusicControlOptions): Promise<any> {
+    throw this.unimplemented('create -> not implemented on web');
   }
 
   destroy(): Promise<any> {
-    return new Promise((resolve) => resolve("any"));
+    throw this.unimplemented('destroy -> not implemented on web');
   }
 
-  updateIsPlaying(args: UpdateNotificationOptions): void {
-    console.log("isPlaying", args);
+  async togglePlayPause(): Promise<TogglePlayPauseResponse> {
+    throw this.unimplemented('togglePlayPause -> not implemented on web');
   }
 
-  updateElapsed(args: { elapsed: string; isPlaying: boolean }): void {
-    console.log(args);
+  updateElapsed(_args: { elapsed: string; isPlaying: boolean }): void {
+    throw this.unimplemented('updateElapsed -> not implemented on web');
   }
 
-  updateDismissable(dismissible: boolean): void {
-    console.log(dismissible);
+  updateDismissable(_dismissible: boolean): void {
+    throw this.unimplemented('_dismissible -> not implemented on web');
   }
 }
-
-const MusicControl = new MusicControlWeb();
-
-export { MusicControl };
-
-import { registerWebPlugin } from "@capacitor/core";
-registerWebPlugin(MusicControl);

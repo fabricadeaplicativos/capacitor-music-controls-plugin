@@ -1,46 +1,29 @@
-import { PluginListenerHandle } from "@capacitor/core";
+import type { PluginListenerHandle } from '@capacitor/core';
 
-declare module "@capacitor/core" {
-  interface PluginRegistry {
-    MusicControl: MusicControlPlugin;
-  }
+export enum MusicControlEvents {
+  FINISHED = 'songFinished',
+  IS_PLAYING = 'isPlaying',
+  NOTIFICATION_ACTIONS = 'mediaActions',
 }
 
-export type NotificationCallback = (info: { message: string }) => void;
-
-export interface UpdateNotificationOptions {
+export interface TogglePlayPauseResponse {
   isPlaying: boolean;
 }
 
 export interface MusicControlOptions {
-  track?: string;
-  artist?: string;
+  album: string;
+  artist: string;
   cover?: string;
-  isPlaying?: boolean;
-  dismissible?: boolean;
-  hasPrevious?: boolean;
-  hasNext?: boolean;
-  hasSkipForward?: boolean;
-  hasSkipBackward?: boolean;
-  skipForwardInterval?: number;
-  skipBackwardInterval?: number;
-  hasScrubbing?: boolean;
-  hasClose?: boolean;
-  album?: string;
-  duration?: number;
-  elapsed?: number;
-  ticker?: string;
-  playIcon?: string;
-  pauseIcon?: string;
-  prevIcon?: string;
-  nextIcon?: string;
-  closeIcon?: string;
-  notificationIcon?: string;
+  track: string;
+  url: string;
 }
 
 export interface MusicControlPlugin {
+  checkPermissions(): Promise<PermissionStatus>;
+  requestPermissions(): Promise<PermissionStatus>;
+
   /**
-   * Create the media controls
+   * Creates the notification and plays the url on a native media player
    * @param options {MusicControlsOptions}
    * @returns {Promise<any>}
    */
@@ -53,35 +36,17 @@ export interface MusicControlPlugin {
   destroy(): Promise<any>;
 
   /**
-   * Subscribe to the events of the media controller
-   * @returns {Observable<any>}
-   */
-  // subscribe(): Observable<any>;
-  // /**
-  //  * Start listening for events, this enables the Observable from the subscribe method
-  //  */
-  // listen(): void;
-
-  /**
    * Toggle play/pause:
-   * @param args {UpdateNotificationOptions}
+   * @returns {Promise<TogglePlayPauseResponse>}
    */
-  updateIsPlaying(args: UpdateNotificationOptions): void;
-
-  /**
-   * Update elapsed time, optionally toggle play/pause:
-   * @param args {Object}
-   */
-  updateElapsed(args: { elapsed: string; isPlaying: boolean }): void;
-
-  /**
-   * Toggle dismissible:
-   * @param dismissible {boolean}
-   */
-  updateDismissable(dismissible: boolean): void;
+  togglePlayPause(): Promise<TogglePlayPauseResponse>;
 
   addListener(
-    eventName: "controlsNotification",
-    listenerFunc: (info: { message: string }) => void
+    eventName: MusicControlEvents,
+    listenerFunc: (info: any) => void,
   ): PluginListenerHandle;
+}
+
+export interface PermissionStatus {
+  wake_lock: PermissionState;
 }

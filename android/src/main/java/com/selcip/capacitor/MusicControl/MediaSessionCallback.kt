@@ -1,46 +1,45 @@
 package com.selcip.capacitor.MusicControl
 
 import android.content.Intent
-import android.media.session.MediaSession
-
 import android.os.Bundle
-
+import android.support.v4.media.session.MediaSessionCompat
 import android.util.Log
 import android.view.KeyEvent
 import com.getcapacitor.JSObject
 
 
-class MediaSessionCallback(private val musicControls: MusicControl) : MediaSession.Callback() {
+class MediaSessionCallback(private val musicControls: MusicControl) :
+    MediaSessionCompat.Callback() {
     override fun onPlay() {
         super.onPlay()
-        Log.i(TAG, "music-controls-media-button-play")
         val ret = JSObject()
-        ret.put("message", "music-controls-media-button-play")
-        musicControls.notify(ret)
+        ret.put("message", "Play button pressed")
+        ret.put("action", "play")
+        musicControls.notifyWebview(ret, "mediaSessionActions")
     }
 
     override fun onPause() {
         super.onPause()
-        Log.i(TAG, "music-controls-media-button-pause")
         val ret = JSObject()
-        ret.put("message", "music-controls-media-button-pause")
-        musicControls.notify(ret)
+        ret.put("message", "Pause button pressed")
+        ret.put("action", "pause")
+        musicControls.notifyWebview(ret, "mediaSessionActions")
     }
 
     override fun onSkipToNext() {
         super.onSkipToNext()
-        Log.i(TAG, "music-controls-media-button-next")
         val ret = JSObject()
-        ret.put("message", "music-controls-media-button-next")
-        musicControls.notify(ret)
+        ret.put("message", "Next button pressed")
+        ret.put("action", "next")
+        musicControls.notifyWebview(ret, "mediaSessionActions")
     }
 
     override fun onSkipToPrevious() {
         super.onSkipToPrevious()
-        Log.i(TAG, "music-controls-media-button-previous")
         val ret = JSObject()
-        ret.put("message", "music-controls-media-button-previous")
-        musicControls.notify(ret)
+        ret.put("message", "Previous button pressed")
+        ret.put("action", "previous")
+        musicControls.notifyWebview(ret, "mediaSessionActions")
     }
 
     override fun onPlayFromMediaId(mediaId: String, extras: Bundle) {
@@ -49,15 +48,15 @@ class MediaSessionCallback(private val musicControls: MusicControl) : MediaSessi
 
     override fun onMediaButtonEvent(mediaButtonIntent: Intent): Boolean {
         val event: KeyEvent = mediaButtonIntent.extras!![Intent.EXTRA_KEY_EVENT] as KeyEvent?
-                ?: return super.onMediaButtonEvent(mediaButtonIntent)
+            ?: return super.onMediaButtonEvent(mediaButtonIntent)
 
-        Log.i(TAG, "Evento: $event")
+        Log.i(TAG, "media button event: $event")
 
         return true
     }
 
     companion object {
-        private const val TAG = "[CMC] MSessionCallback"
+        private const val TAG = "[CMC] MediaSessionCallback"
     }
 
 }
