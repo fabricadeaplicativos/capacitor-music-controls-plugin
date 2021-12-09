@@ -28,17 +28,19 @@ npx cap sync
 
 
 ## Configuration
+If you don't want a notification or auto-play you can add this to your capacitor config file.
+Default is `true` for both
 
-If you don't want the notifications you can add this to your capacitor config file.
-Default is `true`
+***This only affects android***
 
 ```json
 [...]
-  "plugins": {
-    "MusicControl": {
-      showNotification: false
-    }
-  }
+"plugins": {
+	"MusicControl": {
+		showNotification: false,
+		autoPlay: false
+	}
+}
 [...]
 ```
 
@@ -57,7 +59,8 @@ MusicControl.create({
 	track: "cool music",
 	url: "https://random.site/music.mp3",
 	album: "album name",
-	artist: "artist name"  
+	artist: "artist name"
+	autoPlay: false //default is true, only works on web
 });
 
 // toggles play/pause, state is handled by the plugin
@@ -95,6 +98,22 @@ MusicControl.addListener(
 	MusicControlEvents.NOTIFICATION_ACTIONS,
 	(data: { action: 'play' | 'pause' | 'previous' | 'next' | 'destroy' } ) => {
 		// triggered when the user interacts with the notification		
+	}
+);
+
+// timeUpdated
+MusicControl.addListener(
+	MusicControlEvents.TIME_UPDATED,
+	(data: { currentTime: number } ) => {
+		// track the music progress in seconds
+	}
+);
+
+// musicLoaded
+MusicControl.addListener(
+	MusicControlEvents.MUSIC_LOADED,
+	(data: { duration: number } ) => {
+		// triggered when the music file is done loading
 	}
 );
 
