@@ -4,6 +4,8 @@ export enum MusicControlEvents {
   FINISHED = 'songFinished',
   IS_PLAYING = 'isPlaying',
   NOTIFICATION_ACTIONS = 'mediaActions',
+  TIME_UPDATED = 'timeUpdated',
+  MUSIC_LOADED = 'musicLoaded',
 }
 
 export interface TogglePlayPauseResponse {
@@ -16,6 +18,7 @@ export interface MusicControlOptions {
   cover?: string;
   track: string;
   url: string;
+  autoPlay?: boolean;
 }
 
 export interface MusicControlPlugin {
@@ -31,9 +34,9 @@ export interface MusicControlPlugin {
 
   /**
    * Destroy the media controller
-   * @returns {Promise<any>}
+   * @returns {void}
    */
-  destroy(): Promise<any>;
+  destroy(): void;
 
   /**
    * Toggle play/pause:
@@ -42,9 +45,23 @@ export interface MusicControlPlugin {
   togglePlayPause(): Promise<TogglePlayPauseResponse>;
 
   addListener(
-    eventName: MusicControlEvents,
-    listenerFunc: (info: any) => void,
-  ): PluginListenerHandle;
+    eventName: MusicControlEvents.IS_PLAYING | MusicControlEvents.FINISHED,
+    listenerFunc: (info: { isPlaying: boolean }) => void,
+  ): Promise<PluginListenerHandle>;
+  addListener(
+    eventName: MusicControlEvents.TIME_UPDATED,
+    listenerFunc: (info: { currentTime: number }) => void,
+  ): Promise<PluginListenerHandle>;
+  addListener(
+    eventName: MusicControlEvents.MUSIC_LOADED,
+    listenerFunc: (info: { duration: number }) => void,
+  ): Promise<PluginListenerHandle>;
+  addListener(
+    eventName: MusicControlEvents.NOTIFICATION_ACTIONS,
+    listenerFunc: (info: {
+      action: 'play' | 'pause' | 'previous' | 'next' | 'destroy';
+    }) => void,
+  ): Promise<PluginListenerHandle>;
 }
 
 export interface PermissionStatus {

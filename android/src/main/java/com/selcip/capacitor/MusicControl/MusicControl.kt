@@ -10,7 +10,6 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.media.AudioAttributes
 import android.media.AudioManager
-import android.media.MediaMetadata
 import android.media.MediaPlayer
 import android.media.session.PlaybackState
 import android.os.Handler
@@ -36,6 +35,7 @@ import java.net.URL
 class MusicControl : Plugin() {
     private lateinit var trackInfo: TrackInfo
     private lateinit var notification: MusicControlNotification;
+    private var showNotification: Boolean = true;
     lateinit var mediaSession: MediaSessionCompat
 
     private var mediaPlayer: MediaPlayer? = null
@@ -52,6 +52,8 @@ class MusicControl : Plugin() {
         if (!setupDone) {
             setup()
         }
+
+        showNotification = config.getBoolean("showNotification", true)
     }
 
     fun setup() {
@@ -122,7 +124,6 @@ class MusicControl : Plugin() {
 
         try {
             createMediaPlayer(call)
-            setMetadata()
             call.resolve()
         } catch (error: JSONException) {
             Log.i(TAG, "Error creating notification")
@@ -138,6 +139,7 @@ class MusicControl : Plugin() {
         try {
 //            context.unregisterReceiver(broadcastReceiver)
 //            isBroadcastRegistered = false;
+            stopCurrentDurationCounter()
             notification.destroy()
             stopMusic();
         } catch (e: IllegalArgumentException) {
@@ -187,7 +189,7 @@ class MusicControl : Plugin() {
     }
 
 
-    fun setMetadata() {
+    fun setMetadata(songDuration: Int) {
         val metadata = MediaMetadataCompat.Builder()
             .putString(MediaMetadataCompat.METADATA_KEY_TITLE, trackInfo.track)
             .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, trackInfo.artist)
@@ -205,7 +207,6 @@ class MusicControl : Plugin() {
         mediaSession.setMetadata(metadata.build())
     }
 
-    //
     private fun registerMediaButtonReceiver() {
         this.mediaSession.setMediaButtonReceiver(mediaButtonPendingIntent)
     }
@@ -235,23 +236,7 @@ class MusicControl : Plugin() {
         this.mediaSession.setMediaButtonReceiver(null)
     }
 
-    private fun getBitmapFromURL(stringUrl: String): Bitmap? {
-        return try {
-            Log.i(TAG, "Downloading cover: $stringUrl")
-            val url = URL(stringUrl)
-            val connection = url.openConnection() as HttpURLConnection
-            connection.doInput = true
-            connection.connect()
-            val input = connection.inputStream
-            BitmapFactory.decodeStream(input)
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-            null
-        }
-    }
-
     fun notifyWebview(ret: JSObject, eventName: String = "controlsNotification") {
-        Log.i(TAG, "$eventName fired " + ret.getString("message"))
         notifyListeners(eventName, ret)
     }
 
@@ -261,14 +246,6 @@ class MusicControl : Plugin() {
             stopCurrentDurationCounter()
             pauseMusic()
         }
-
-        //track current position every second
-//      mainHandler.post(object : Runnable {
-//          override fun run() {
-//              Log.i(TAG, "Current position: ${mediaPlayer?.currentPosition} Total: ${mediaPlayer?.duration}")
-//              mainHandler.postDelayed(this, 1000)
-//          }
-//      })
 
         trackInfo = TrackInfo(call.data);
         val url = trackInfo.url
@@ -288,10 +265,20 @@ class MusicControl : Plugin() {
         }
 
         mediaPlayer?.setOnPreparedListener {
-            Log.i(TAG, "music prepared, full duration is ${mediaPlayer?.duration}")
-            playMusic()
+            val musicLoaded = JSObject()
+            musicLoaded.put("duration", mediaPlayer?.duration?.div(1000))
+            notifyWebview(musicLoaded, "musicLoaded")
 
-            val showNotification = config.getBoolean("showNotification", true)
+
+            mediaPlayer?.duration?.let { it1 -> setMetadata(it1) }
+
+            val autoPlay = config.getBoolean("autoPlay", true)
+
+            if (autoPlay) {
+                playMusic()
+            }
+
+            startCurrentDurationCounter();
 
             if (showNotification) {
                 notification.createNotification(trackInfo)
@@ -302,29 +289,37 @@ class MusicControl : Plugin() {
         mediaPlayer?.setOnCompletionListener {
             val ret = JSObject()
             ret.put("isPlaying", mediaPlayer?.isPlaying == true)
-            ret.put("message", "song finished")
             notifyWebview(ret, "songFinished")
+
+            if (showNotification) {
+                notification.isPlaying = false
+            }
+
             mainHandler.removeCallbacksAndMessages(null)
         }
     }
 
     fun playMusic() {
         mediaPlayer?.start();
-        notification.isPlaying = mediaPlayer?.isPlaying == true
+        startCurrentDurationCounter()
+        if (showNotification) {
+            notification.isPlaying = mediaPlayer?.isPlaying == true
+        }
 
         val ret = JSObject()
         ret.put("isPlaying", mediaPlayer?.isPlaying == true)
-        ret.put("message", "playing music")
         notifyWebview(ret, "isPlaying")
     }
 
     fun pauseMusic() {
         mediaPlayer?.pause();
-        notification.isPlaying = mediaPlayer?.isPlaying == true
+        stopCurrentDurationCounter()
+        if (showNotification) {
+            notification.isPlaying = mediaPlayer?.isPlaying == true
+        }
 
         val ret = JSObject()
         ret.put("isPlaying", mediaPlayer?.isPlaying == true)
-        ret.put("message", "pausing music")
         notifyWebview(ret, "isPlaying")
     }
 
@@ -335,7 +330,6 @@ class MusicControl : Plugin() {
 
         val ret = JSObject()
         ret.put("isPlaying", mediaPlayer?.isPlaying == true)
-        ret.put("message", "pausing music")
         notifyWebview(ret, "isPlaying")
     }
 
@@ -343,9 +337,20 @@ class MusicControl : Plugin() {
         mainHandler.removeCallbacksAndMessages(null)
     }
 
+    private fun startCurrentDurationCounter() {
+        mainHandler.post(object : Runnable {
+            override fun run() {
+                val timeUpdated = JSObject()
+                timeUpdated.put("currentTime", mediaPlayer?.currentPosition?.div(1000))
+                notifyWebview(timeUpdated, "timeUpdated")
+                mainHandler.postDelayed(this, 500)
+            }
+        })
+    }
+
     @PermissionCallback
     fun mediaPlayerPermissionsCallback(call: PluginCall) {
-        Log.i(TAG, "callbackzada")
+        Log.i(TAG, "callback")
     }
 
     //
@@ -363,7 +368,6 @@ class MusicControl : Plugin() {
 
     companion object {
         private const val TAG = "[CMC] Main Service"
-        private const val CHANNEL_ID = "CMCNotification"
         private const val NOTIFICATION_ID = 7824
     }
 }

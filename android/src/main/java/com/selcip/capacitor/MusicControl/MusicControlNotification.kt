@@ -108,13 +108,12 @@ class MusicControlNotification(
             .setContentText(trackInfo?.artist)
             .setLargeIcon(cover)
 
-        val smallIcon = R.drawable.cmc_play_icon
         val customSmallIcon = AssetUtil.getResourceID(context, "cmc_small_icon", "drawable")
 
         if (customSmallIcon > 0) {
             builder.setSmallIcon(customSmallIcon)
         } else {
-            builder.setSmallIcon(smallIcon)
+            builder.setSmallIcon(R.drawable.cmc_play_icon)
         }
 
         notificationBuilder = builder

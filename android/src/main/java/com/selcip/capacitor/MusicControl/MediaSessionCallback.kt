@@ -13,7 +13,6 @@ class MediaSessionCallback(private val musicControls: MusicControl) :
     override fun onPlay() {
         super.onPlay()
         val ret = JSObject()
-        ret.put("message", "Play button pressed")
         ret.put("action", "play")
         musicControls.notifyWebview(ret, "mediaSessionActions")
     }
@@ -21,7 +20,6 @@ class MediaSessionCallback(private val musicControls: MusicControl) :
     override fun onPause() {
         super.onPause()
         val ret = JSObject()
-        ret.put("message", "Pause button pressed")
         ret.put("action", "pause")
         musicControls.notifyWebview(ret, "mediaSessionActions")
     }
@@ -29,7 +27,6 @@ class MediaSessionCallback(private val musicControls: MusicControl) :
     override fun onSkipToNext() {
         super.onSkipToNext()
         val ret = JSObject()
-        ret.put("message", "Next button pressed")
         ret.put("action", "next")
         musicControls.notifyWebview(ret, "mediaSessionActions")
     }
@@ -37,7 +34,6 @@ class MediaSessionCallback(private val musicControls: MusicControl) :
     override fun onSkipToPrevious() {
         super.onSkipToPrevious()
         val ret = JSObject()
-        ret.put("message", "Previous button pressed")
         ret.put("action", "previous")
         musicControls.notifyWebview(ret, "mediaSessionActions")
     }

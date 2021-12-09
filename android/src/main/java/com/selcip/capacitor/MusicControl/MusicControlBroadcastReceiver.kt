@@ -23,30 +23,25 @@ class MusicControlsBroadcastReceiver(private val musicControls: MusicControl) : 
         Log.i(TAG, "Message received: $message")
 
         when (message) {
-            "music-controls-pause" -> {
-                ret.put("message", "Pause button pressed")
+            "music-controls-pause" -> {                
                 ret.put("action", "pause")
                 musicControls.pauseMusic()
                 musicControls.notifyWebview(ret, "mediaActions")
             }
-            "music-controls-play" -> {
-                ret.put("message", "Play button pressed")
+            "music-controls-play" -> {                
                 ret.put("action", "play")
                 musicControls.playMusic()
                 musicControls.notifyWebview(ret, "mediaActions")
             }
-            "music-controls-next" -> {
-                ret.put("message", "Next button pressed")
+            "music-controls-next" -> {                
                 ret.put("action", "next")
                 musicControls.notifyWebview(ret, "mediaActions")
             }
-            "music-controls-previous" -> {
-                ret.put("message", "Previous button pressed")
+            "music-controls-previous" -> {                
                 ret.put("action", "previous")
                 musicControls.notifyWebview(ret, "mediaActions")
             }
-            "music-controls-destroy" -> {
-                ret.put("message", "Notification destroyed")
+            "music-controls-destroy" -> {                
                 ret.put("action", "destroy")
                 musicControls.notifyWebview(ret, "mediaActions")
             }
