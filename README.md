@@ -50,7 +50,7 @@ The notification will try to use the resource named **cmc_small_icon** located o
 
 ## Usage
 ```typescript
-import { MusicControl } from 'capacitor-music-controls';
+import { MusicControl } from 'capacitor-music-control';
 ```
 ### Available methods
 ```typescript
@@ -75,7 +75,7 @@ MusicControl.destroy();
 
 
 ```typescript
-import { MusicControlEvents } from "capacitor-music-controls";
+import { MusicControlEvents } from "capacitor-music-control";
 
 // isPlaying
 MusicControl.addListener(
