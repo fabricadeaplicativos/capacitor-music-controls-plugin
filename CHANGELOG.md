@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.1.0-beta.1](https://github.com/selcip/capacitor-music-controls-plugin/compare/v2.1.0-beta.0...v2.1.0-beta.1) (2022-02-18)
+
+
+### Features
+
+* adding jumpTo functionality ([1b850dc](https://github.com/selcip/capacitor-music-controls-plugin/commit/1b850dc25bdc0a6406f2fdb12f7b62511de53a3f))
+
 ## [2.1.0-beta.0](https://github.com/selcip/capacitor-music-controls-plugin/compare/v2.0.2-beta.0...v2.1.0-beta.0) (2021-12-09)
 
 
