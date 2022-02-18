@@ -9,6 +9,9 @@ export declare enum MusicControlEvents {
 export interface TogglePlayPauseResponse {
     isPlaying: boolean;
 }
+export interface JumpToObject {
+    time: number;
+}
 export interface MusicControlOptions {
     album: string;
     artist: string;
@@ -36,6 +39,12 @@ export interface MusicControlPlugin {
      * @returns {Promise<TogglePlayPauseResponse>}
      */
     togglePlayPause(): Promise<TogglePlayPauseResponse>;
+    /**
+     * Jumps to a certain point in the audio file
+     * @param {JumpToObject}
+     * @returns {any}
+     */
+    jumpTo(data: JumpToObject): any;
     addListener(eventName: MusicControlEvents.IS_PLAYING | MusicControlEvents.FINISHED, listenerFunc: (info: {
         isPlaying: boolean;
     }) => void): Promise<PluginListenerHandle>;

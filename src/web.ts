@@ -6,6 +6,7 @@ import type {
   MusicControlPlugin,
   PermissionStatus,
   TogglePlayPauseResponse,
+  JumpToObject
 } from './definitions';
 import { MusicControlEvents } from './definitions';
 
@@ -102,5 +103,9 @@ export class MusicControlWeb extends WebPlugin implements MusicControlPlugin {
 
   updateDismissable(_dismissible: boolean): void {
     throw this.unimplemented('_dismissible -> not implemented on web');
+  }
+
+  jumpTo(data: JumpToObject): any {
+    (this.webAudioPlayer as HTMLAudioElement).currentTime = data.time;
   }
 }

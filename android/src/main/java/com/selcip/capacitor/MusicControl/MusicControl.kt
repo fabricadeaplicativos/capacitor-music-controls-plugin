@@ -188,6 +188,16 @@ class MusicControl : Plugin() {
         call.resolve(ret)
     }
 
+    @PluginMethod
+    fun jumpTo(call: PluginCall) {
+        val time: Int? = call.getInt("time")
+
+        if (time != null) {
+            mediaPlayer?.seekTo(time.times(1000))
+        }
+
+        call.resolve()
+    }
 
     fun setMetadata(songDuration: Int) {
         val metadata = MediaMetadataCompat.Builder()
