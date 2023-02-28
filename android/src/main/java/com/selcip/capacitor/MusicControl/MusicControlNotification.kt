@@ -1,6 +1,6 @@
 package com.selcip.capacitor.MusicControl
 
-import android.R.attr
+//import android.R.attr
 import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -10,10 +10,10 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Build
-import android.support.v4.media.session.PlaybackStateCompat
+//import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
 import androidx.core.app.NotificationCompat
-import androidx.media.session.MediaButtonReceiver
+//import androidx.media.session.MediaButtonReceiver
 import com.selcip.capacitor.MusicControl.Models.TrackInfo
 import com.selcip.capacitor.MusicControl.capacitormusiccontrol.R
 import java.net.HttpURLConnection
@@ -21,9 +21,9 @@ import java.net.URL
 import androidx.media.app.NotificationCompat as MediaNotificationCompat
 import com.getcapacitor.plugin.util.AssetUtil
 
-import com.getcapacitor.Logger.config
-import android.R.attr.smallIcon
-import com.getcapacitor.PluginConfig
+//import com.getcapacitor.Logger.config
+//import android.R.attr.smallIcon
+//import com.getcapacitor.PluginConfig
 
 
 @SuppressLint("ServiceCast")

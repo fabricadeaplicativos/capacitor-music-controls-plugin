@@ -6,8 +6,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.ServiceConnection
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
+//import android.graphics.Bitmap
+//import android.graphics.BitmapFactory
 import android.media.AudioAttributes
 import android.media.AudioManager
 import android.media.MediaPlayer
@@ -25,8 +25,8 @@ import com.getcapacitor.annotation.Permission
 import com.getcapacitor.annotation.PermissionCallback
 import com.selcip.capacitor.MusicControl.Models.TrackInfo
 import org.json.JSONException
-import java.net.HttpURLConnection
-import java.net.URL
+//import java.net.HttpURLConnection
+//import java.net.URL
 
 @CapacitorPlugin(
     name = "MusicControl",
@@ -34,15 +34,15 @@ import java.net.URL
 )
 class MusicControl : Plugin() {
     private lateinit var trackInfo: TrackInfo
-    private lateinit var notification: MusicControlNotification;
-    private var showNotification: Boolean = true;
+    private lateinit var notification: MusicControlNotification
+    private var showNotification: Boolean = true
     lateinit var mediaSession: MediaSessionCompat
 
     private var mediaPlayer: MediaPlayer? = null
-    private var setupDone: Boolean = false;
+    private var setupDone: Boolean = false
     private var mainHandler = Handler(Looper.getMainLooper())
     private var broadcastReceiver: MusicControlsBroadcastReceiver? = null
-    private var isBroadcastRegistered = false;
+    private var isBroadcastRegistered = false
     private var mediaSessionCallback: MediaSessionCallback? = null
     private var mediaButtonPendingIntent: PendingIntent? = null
     private var canAccessMediaButton: Boolean = false
@@ -63,17 +63,17 @@ class MusicControl : Plugin() {
             context.unregisterReceiver(broadcastReceiver)
         }
 
-        broadcastReceiver = MusicControlsBroadcastReceiver(this);
-        registerBroadcaster(broadcastReceiver);
-        isBroadcastRegistered = true;
+        broadcastReceiver = MusicControlsBroadcastReceiver(this)
+        registerBroadcaster(broadcastReceiver)
+        isBroadcastRegistered = true
 
         if (!this::mediaSession.isInitialized) {
             mediaSession = MediaSessionCompat(context, "music-media-session")
-            setMediaPlaybackState(PlaybackState.STATE_PLAYING);
+            setMediaPlaybackState(PlaybackState.STATE_PLAYING)
             mediaSession.isActive = true
 
-            mediaSessionCallback = MediaSessionCallback(this);
-            mediaSession.setCallback(mediaSessionCallback);
+            mediaSessionCallback = MediaSessionCallback(this)
+            mediaSession.setCallback(mediaSessionCallback)
         }
 
         try {
@@ -115,7 +115,7 @@ class MusicControl : Plugin() {
     @PluginMethod
     fun create(call: PluginCall) {
         if (getPermissionState("wake_lock") != PermissionState.GRANTED) {
-            requestPermissionForAlias("wake_lock", call, "mediaPlayerPermissionsCallback");
+            requestPermissionForAlias("wake_lock", call, "mediaPlayerPermissionsCallback")
         }
 
         if (!setupDone) {
@@ -141,7 +141,7 @@ class MusicControl : Plugin() {
 //            isBroadcastRegistered = false;
             stopCurrentDurationCounter()
             notification.destroy()
-            stopMusic();
+            stopMusic()
         } catch (e: IllegalArgumentException) {
             e.printStackTrace()
         }
@@ -257,7 +257,7 @@ class MusicControl : Plugin() {
             pauseMusic()
         }
 
-        trackInfo = TrackInfo(call.data);
+        trackInfo = TrackInfo(call.data)
         val url = trackInfo.url
 
         Log.i(TAG, "creating a new media player $url")
@@ -288,7 +288,7 @@ class MusicControl : Plugin() {
                 playMusic()
             }
 
-            startCurrentDurationCounter();
+            startCurrentDurationCounter()
 
             if (showNotification) {
                 notification.createNotification(trackInfo)
@@ -310,7 +310,7 @@ class MusicControl : Plugin() {
     }
 
     fun playMusic() {
-        mediaPlayer?.start();
+        mediaPlayer?.start()
         startCurrentDurationCounter()
         if (showNotification) {
             notification.isPlaying = mediaPlayer?.isPlaying == true
@@ -322,7 +322,7 @@ class MusicControl : Plugin() {
     }
 
     fun pauseMusic() {
-        mediaPlayer?.pause();
+        mediaPlayer?.pause()
         stopCurrentDurationCounter()
         if (showNotification) {
             notification.isPlaying = mediaPlayer?.isPlaying == true
@@ -334,9 +334,9 @@ class MusicControl : Plugin() {
     }
 
     private fun stopMusic() {
-        mediaPlayer?.pause();
+        mediaPlayer?.pause()
         mediaPlayer?.release()
-        mediaPlayer = null;
+        mediaPlayer = null
 
         val ret = JSObject()
         ret.put("isPlaying", mediaPlayer?.isPlaying == true)
