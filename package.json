@@ -1,6 +1,6 @@
 {
   "name": "capacitor-music-control",
-  "version": "2.1.0-beta.1",
+  "version": "3.0.0",
   "description": "Media control for capacitor projects",
   "main": "dist/plugin.cjs.js",
   "module": "dist/esm/index.js",
@@ -15,10 +15,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/selcip/capacitor-music-controls-plugin"
+    "url": "https://github.com/fabricadeaplicativos/capacitor-music-controls-plugin"
   },
   "bugs": {
-    "url": "https://github.com/selcip/capacitor-music-controls-plugin/issues"
+    "url": "https://github.com/fabricadeaplicativos/capacitor-music-controls-plugin/issues"
   },
   "keywords": [
     "capacitor",
@@ -50,7 +50,8 @@
     "rollup": "^2.32.0",
     "standard-version": "^9.3.2",
     "swiftlint": "^1.0.1",
-    "typescript": "~4.0.3"
+    "typescript": "~4.0.3",
+    "@types/node": "18.11.19"
   },
   "peerDependencies": {
     "@capacitor/core": "^3.0.0"
