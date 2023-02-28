@@ -82,7 +82,7 @@ class MusicControl : Plugin() {
                 context,
                 0,
                 Intent("music-controls-media-button"),
-                PendingIntent.FLAG_UPDATE_CURRENT
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
             )
             registerMediaButtonReceiver()
         } catch (e: java.lang.Exception) {

@@ -66,7 +66,7 @@ class MusicControlNotification(
                 context,
                 1,
                 Intent("music-controls-previous"),
-                PendingIntent.FLAG_IMMUTABLE)
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE)
 
         val playOrPausePendingIntent =
             PendingIntent.getBroadcast(
@@ -79,20 +79,20 @@ class MusicControlNotification(
                         "music-controls-play"
                     }
                 ),
-                PendingIntent.FLAG_IMMUTABLE
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
             )
 
         val nextPendingIntent =
-            PendingIntent.getBroadcast(context, 1, Intent("music-controls-next"), PendingIntent.FLAG_IMMUTABLE)
+            PendingIntent.getBroadcast(context, 1, Intent("music-controls-next"), PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE)
         val deleteIntent =
-            PendingIntent.getBroadcast(context, 1, Intent("music-controls-destroy"), PendingIntent.FLAG_IMMUTABLE)
+            PendingIntent.getBroadcast(context, 1, Intent("music-controls-destroy"), PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE)
         val openIntent =
             PendingIntent.getActivity(
                 context,
                 0,
                 Intent(context, context.javaClass).setAction(Intent.ACTION_MAIN)
                     .addCategory(Intent.CATEGORY_LAUNCHER),
-                PendingIntent.FLAG_IMMUTABLE
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
             )
 
         val builder = NotificationCompat.Builder(context, CHANNEL_ID)
