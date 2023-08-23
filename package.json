@@ -1,6 +1,6 @@
 {
   "name": "capacitor-music-control",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "description": "Media control for capacitor projects",
   "main": "dist/plugin.cjs.js",
   "module": "dist/esm/index.js",
@@ -36,8 +36,8 @@
     "release": "standard-version"
   },
   "devDependencies": {
-    "@capacitor/android": "^3.0.0",
-    "@capacitor/core": "^3.0.0",
+    "@capacitor/android": "^4.0.0",
+    "@capacitor/core": "^4.0.0",
     "@capacitor/docgen": "^0.0.10",
     "@ionic/eslint-config": "^0.3.0",
     "@ionic/prettier-config": "^1.0.1",
@@ -54,7 +54,7 @@
     "@types/node": "18.11.19"
   },
   "peerDependencies": {
-    "@capacitor/core": "^3.0.0"
+    "@capacitor/core": "^4.0.0"
   },
   "prettier": "@ionic/prettier-config",
   "swiftlint": "@ionic/swiftlint-config",
