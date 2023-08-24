@@ -4,6 +4,7 @@ ext {
     androidxMediaVersion = project.hasProperty('androidxMediaVersion') ? rootProject.ext.androidxMediaVersion : '1.6.0'
     androidxJunitVersion = project.hasProperty('androidxJunitVersion') ? rootProject.ext.androidxJunitVersion : '1.1.5'
     androidxEspressoCoreVersion = project.hasProperty('androidxEspressoCoreVersion') ? rootProject.ext.androidxEspressoCoreVersion : '3.5.1'
+    cordovaAndroidVersion = project.hasProperty('cordovaAndroidVersion') ? rootProject.ext.cordovaAndroidVersion : '11.0.0'
 }
 
 buildscript {   
