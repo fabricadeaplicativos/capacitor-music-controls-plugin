@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [6.0.1](https://github.com/fabricadeaplicativos/capacitor-music-controls-plugin/compare/v2.1.0-beta.1...v6.0.1) (2024-07-12)
+
 ## [2.1.0-beta.1](https://github.com/selcip/capacitor-music-controls-plugin/compare/v2.1.0-beta.0...v2.1.0-beta.1) (2022-02-18)
 
 
