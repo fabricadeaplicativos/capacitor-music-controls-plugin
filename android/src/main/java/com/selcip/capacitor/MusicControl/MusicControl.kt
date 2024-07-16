@@ -3,6 +3,7 @@ package com.selcip.capacitor.MusicControl
 import android.Manifest
 import android.app.PendingIntent
 import android.content.Context
+import android.content.Context.RECEIVER_EXPORTED
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.ServiceConnection
@@ -25,8 +26,6 @@ import com.getcapacitor.annotation.Permission
 import com.getcapacitor.annotation.PermissionCallback
 import com.selcip.capacitor.MusicControl.Models.TrackInfo
 import org.json.JSONException
-//import java.net.HttpURLConnection
-//import java.net.URL
 
 @CapacitorPlugin(
     name = "MusicControl",
@@ -365,12 +364,12 @@ class MusicControl : Plugin() {
 
     //
     private fun registerBroadcaster(broadcastReceiver: MusicControlsBroadcastReceiver?) {
-        context.registerReceiver(broadcastReceiver, IntentFilter("music-controls-previous"))
-        context.registerReceiver(broadcastReceiver, IntentFilter("music-controls-pause"))
-        context.registerReceiver(broadcastReceiver, IntentFilter("music-controls-play"))
-        context.registerReceiver(broadcastReceiver, IntentFilter("music-controls-next"))
-        context.registerReceiver(broadcastReceiver, IntentFilter("music-controls-media-button"))
-        context.registerReceiver(broadcastReceiver, IntentFilter("music-controls-destroy"))
+        context.registerReceiver(broadcastReceiver, IntentFilter("music-controls-previous"), RECEIVER_EXPORTED)
+        context.registerReceiver(broadcastReceiver, IntentFilter("music-controls-pause"), RECEIVER_EXPORTED)
+        context.registerReceiver(broadcastReceiver, IntentFilter("music-controls-play"), RECEIVER_EXPORTED)
+        context.registerReceiver(broadcastReceiver, IntentFilter("music-controls-next"), RECEIVER_EXPORTED)
+        context.registerReceiver(broadcastReceiver, IntentFilter("music-controls-media-button"), RECEIVER_EXPORTED)
+        context.registerReceiver(broadcastReceiver, IntentFilter("music-controls-destroy"), RECEIVER_EXPORTED)
 
         // Listen for headset plug/unplug
         context.registerReceiver(broadcastReceiver, IntentFilter(Intent.ACTION_HEADSET_PLUG))
