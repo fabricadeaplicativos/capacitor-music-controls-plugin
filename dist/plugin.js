@@ -104,8 +104,6 @@ var capacitorExample = (function (exports, core) {
 
     exports.MusicControl = MusicControl;
 
-    Object.defineProperty(exports, '__esModule', { value: true });
-
     return exports;
 
 })({}, capacitorExports);
