@@ -45,6 +45,9 @@ export interface MusicControlPlugin {
      * @returns {any}
      */
     jumpTo(data: JumpToObject): any;
+    addListener(eventName: "mediaSessionActions", listenerFunc: (info: {
+        isPlaying: boolean;
+    }) => void): Promise<PluginListenerHandle>;
     addListener(eventName: MusicControlEvents.IS_PLAYING | MusicControlEvents.FINISHED, listenerFunc: (info: {
         isPlaying: boolean;
     }) => void): Promise<PluginListenerHandle>;

@@ -246,6 +246,7 @@ class MusicControl : Plugin() {
     }
 
     fun notifyWebview(ret: JSObject, eventName: String = "controlsNotification") {
+        Log.i(TAG, "notifyWebview notifyWebview" + eventName)
         notifyListeners(eventName, ret)
     }
 
